@@ -143,7 +143,3 @@ flutter build apk
 * Improve validation for due dates and empty fields
 * Add screenshots to the README
 * Add release builds for supported platforms
-
-## License
-
-No license has been added yet. Add a `LICENSE` file if you want to define how others can use or contribute to this project.
