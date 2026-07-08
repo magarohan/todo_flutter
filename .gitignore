@@ -1,0 +1,18 @@
+
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Android/Gradle
+.gradle/
+android/.gradle/
+android/app/build/
+
+# IDE
+.idea/
+*.iml
