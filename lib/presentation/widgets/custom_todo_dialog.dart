@@ -63,12 +63,15 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                     Text(
                       widget.todo == null ? "Add a new TODO" : "Edit TODO",
                       style: const TextStyle(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         fontSize: 18,
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text("Title"),
+                    const Text(
+                      "Title",
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
                     TextField(
                       controller: titleController,
                       style: null,
@@ -78,10 +81,16 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                           borderRadius: BorderRadius.circular(8),
                           borderSide: const BorderSide(color: Colors.black),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.black),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text("Description"),
+                    const Text(
+                      "Description",
+                      style: TextStyle(fontWeight: FontWeight.w700),
+                    ),
                     SizedBox(
                       height: 120,
                       child: TextField(
@@ -94,6 +103,10 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
+
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(color: Colors.black),
+                          ),
                         ),
                       ),
                     ),
@@ -104,7 +117,10 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Urgency"),
+                            const Text(
+                              "Urgency",
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
                             DropdownButton<Urgency>(
                               value: selectedUrgency,
                               items: Urgency.values.map((Urgency urgency) {
@@ -126,7 +142,10 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Due Date"),
+                            const Text(
+                              "Due Date",
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
                             TextButton(
                               onPressed: () async {
                                 final DateTime? picked = await showDatePicker(

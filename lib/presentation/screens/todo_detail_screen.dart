@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todo/core/constants/enums.dart';
 import 'package:todo/data/models/todo_model.dart';
 import 'package:todo/data/repositories/todo_repository.dart';
+import 'package:todo/presentation/widgets/notebook_background.dart';
 
 class TodoDetailScreen extends StatefulWidget {
   final String id;
@@ -22,31 +23,10 @@ class _TodoDetailScreenState extends State<TodoDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/background_image.png"),
-          fit: BoxFit.cover,
-        ),
-      ),
+    return NotebookBackground(
       child: FutureBuilder<TodoModel?>(
         future: _todoFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              backgroundColor: Colors.transparent,
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(title: const Text('Error')),
-              body: Center(child: Text('Error: ${snapshot.error}')),
-            );
-          }
-
           final todo = snapshot.data;
 
           if (todo == null) {

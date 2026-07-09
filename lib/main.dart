@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo/presentation/screens/home_screen.dart';
+import 'package:todo/presentation/screens/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Todo app',
       theme: ThemeData(fontFamily: 'IndieFlower'),
-      home: HomeScreen(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
