@@ -118,7 +118,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
-                        child: CustomTodoTileWidget(todo: todos[index]),
+                        child: CustomTodoTileWidget(
+                          todo: todos[index],
+                          onChanged: _refreshTodos,
+                        ),
                       );
                     },
                   );

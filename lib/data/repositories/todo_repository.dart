@@ -1,4 +1,4 @@
-import 'package:todo/core/handler/baseDbClient.dart';
+import 'package:todo/core/handler/base_db_client.dart';
 import 'package:todo/data/models/todo_model.dart';
 
 class TodoRepository {
@@ -59,6 +59,22 @@ class TodoRepository {
       return updatedTodo;
     } catch (e) {
       throw Exception('Failed to update todo: $e');
+    }
+  }
+
+  static Future<void> deleteTodo(String id) async {
+    try {
+      final rowsAffected = await BaseClient.delete(
+        _tableName,
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      if (rowsAffected == 0) {
+        throw Exception('Todo not found for deletion');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete todo: $e');
     }
   }
 }

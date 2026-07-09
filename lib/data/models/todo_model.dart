@@ -7,7 +7,7 @@ class TodoModel {
   final DateTime dueDate;
   final DateTime updatedAt;
   final Urgency urgency;
-  final bool? isComplete;
+  final bool isComplete;
 
   const TodoModel({
     required this.id,
@@ -50,7 +50,7 @@ class TodoModel {
         (e) => e.name == map['urgency'],
         orElse: () => Urgency.none,
       ),
-      isComplete: map['isComplete'] == 1,
+      isComplete: map['isComplete'] == 1 || map['isComplete'] == true,
     );
   }
 

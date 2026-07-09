@@ -9,7 +9,7 @@ class DatabaseHelper {
 
   static Database? _database;
   static const String _databaseName = "todo_data.db";
-  static const int _databaseVersion = 1;
+  static const int _databaseVersion = 2;
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -27,6 +27,7 @@ class DatabaseHelper {
         path,
         version: _databaseVersion,
         onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
         onConfigure: _onConfigure,
       );
     } catch (e) {
@@ -50,6 +51,13 @@ class DatabaseHelper {
         isComplete INTEGER DEFAULT 0
       )
     ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+          'ALTER TABLE todo ADD COLUMN isComplete INTEGER DEFAULT 0');
+    }
   }
 
   Future<void> close() async {

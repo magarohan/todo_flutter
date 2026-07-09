@@ -4,17 +4,29 @@ import 'package:todo/data/models/todo_model.dart';
 import 'package:todo/data/repositories/todo_repository.dart';
 
 class CustomTodoDialog extends StatefulWidget {
-  const CustomTodoDialog({super.key});
+  final TodoModel? todo;
+  const CustomTodoDialog({super.key, this.todo});
 
   @override
   State<CustomTodoDialog> createState() => _CustomTodoDialogState();
 }
 
 class _CustomTodoDialogState extends State<CustomTodoDialog> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController descController = TextEditingController();
-  Urgency selectedUrgency = Urgency.none;
-  DateTime selectedDate = DateTime.now();
+  late TextEditingController titleController;
+  late TextEditingController descController;
+  late Urgency selectedUrgency;
+  late DateTime selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.todo?.title ?? "");
+    descController = TextEditingController(
+      text: widget.todo?.description ?? "",
+    );
+    selectedUrgency = widget.todo?.urgency ?? Urgency.none;
+    selectedDate = widget.todo?.dueDate ?? DateTime.now();
+  }
 
   @override
   void dispose() {
@@ -48,9 +60,9 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Add a new TODO",
-                      style: TextStyle(
+                    Text(
+                      widget.todo == null ? "Add a new TODO" : "Edit TODO",
+                      style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 18,
                       ),
@@ -139,22 +151,37 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    InkWell(
+                    GestureDetector(
                       onTap: () async {
                         if (titleController.text.isNotEmpty) {
-                          final todo = TodoModel(
-                            id: DateTime.now().millisecondsSinceEpoch
-                                .toString(),
-                            title: titleController.text,
-                            description: descController.text,
-                            dueDate: selectedDate,
-                            updatedAt: DateTime.now(),
-                            urgency: selectedUrgency,
-                          );
-                          final navigator = Navigator.of(context);
-                          await TodoRepository.createTodo(todo);
-                          if (!mounted) return;
-                          navigator.pop();
+                          try {
+                            final todo = TodoModel(
+                              id:
+                                  widget.todo?.id ??
+                                  DateTime.now().millisecondsSinceEpoch
+                                      .toString(),
+                              title: titleController.text,
+                              description: descController.text,
+                              dueDate: selectedDate,
+                              updatedAt: DateTime.now(),
+                              urgency: selectedUrgency,
+                              isComplete: widget.todo?.isComplete ?? false,
+                            );
+                            final navigator = Navigator.of(context);
+                            if (widget.todo == null) {
+                              await TodoRepository.createTodo(todo);
+                            } else {
+                              await TodoRepository.updateTodo(todo);
+                            }
+                            if (!mounted) return;
+                            navigator.pop();
+                          } catch (e) {
+                            if (!mounted) return;
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Error: $e")),
+                            );
+                          }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -163,10 +190,11 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                           );
                         }
                       },
+                      behavior: HitTestBehavior.opaque,
                       child: Container(
                         alignment: Alignment.center,
                         padding: const EdgeInsets.all(12),
-                        width: MediaQuery.of(context).size.width * 0.9,
+                        width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.black,
                           border: Border.all(color: Colors.black),
@@ -175,9 +203,9 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                             BoxShadow(color: Colors.grey, offset: Offset(5, 5)),
                           ],
                         ),
-                        child: const Text(
-                          "Add",
-                          style: TextStyle(
+                        child: Text(
+                          widget.todo == null ? "Add" : "Update",
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,

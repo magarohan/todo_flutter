@@ -3,14 +3,12 @@ import 'package:todo/data/models/todo_model.dart';
 import 'package:todo/presentation/screens/todo_detail_screen.dart';
 import 'package:todo/data/repositories/todo_repository.dart';
 
+import 'package:todo/presentation/widgets/custom_todo_dialog.dart';
+
 class CustomTodoTileWidget extends StatefulWidget {
   final TodoModel todo;
-  final bool isChecked;
-  const CustomTodoTileWidget({
-    super.key,
-    required this.todo,
-    this.isChecked = false,
-  });
+  final VoidCallback? onChanged;
+  const CustomTodoTileWidget({super.key, required this.todo, this.onChanged});
 
   @override
   State<CustomTodoTileWidget> createState() => _CustomTodoTileWidgetState();
@@ -22,14 +20,14 @@ class _CustomTodoTileWidgetState extends State<CustomTodoTileWidget> {
   @override
   void initState() {
     super.initState();
-    _isChecked = widget.isChecked;
+    _isChecked = widget.todo.isComplete;
   }
 
   @override
   void didUpdateWidget(covariant CustomTodoTileWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.isChecked != widget.isChecked) {
-      _isChecked = widget.isChecked;
+    if (oldWidget.todo.isComplete != widget.todo.isComplete) {
+      _isChecked = widget.todo.isComplete;
     }
   }
 
@@ -53,29 +51,88 @@ class _CustomTodoTileWidgetState extends State<CustomTodoTileWidget> {
                 await TodoRepository.updateTodo(
                   widget.todo.copyWith(isComplete: value),
                 );
+                if (widget.onChanged != null) {
+                  widget.onChanged!();
+                }
               },
             ),
           ),
         ),
-        InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => TodoDetailScreen(id: widget.todo.id),
+        Expanded(
+          child: InkWell(
+            onTap: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => TodoDetailScreen(id: widget.todo.id),
+                ),
+              );
+              if (widget.onChanged != null) {
+                widget.onChanged!();
+              }
+            },
+            child: Text(
+              widget.todo.title,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                decoration: _isChecked
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                fontStyle: FontStyle.italic,
               ),
-            );
-          },
-          child: Text(
-            widget.todo.title,
-            style: TextStyle(
-              decoration: _isChecked
-                  ? TextDecoration.lineThrough
-                  : TextDecoration.none,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              fontStyle: FontStyle.italic,
             ),
           ),
+        ),
+        IconButton(
+          onPressed: () async {
+            await showDialog(
+              context: context,
+              builder: (context) => CustomTodoDialog(todo: widget.todo),
+            );
+            if (widget.onChanged != null) {
+              widget.onChanged!();
+            }
+          },
+          icon: const Icon(Icons.edit, color: Colors.blue),
+        ),
+        IconButton(
+          onPressed: () async {
+            final confirm = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: const Color(0xFFf8e3c6),
+                title: const Text("Delete Todo"),
+                content: const Text(
+                  "Are you sure you want to delete this todo?",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: const Text(
+                      "Delete",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
+              ),
+            );
+
+            if (confirm == true) {
+              await TodoRepository.deleteTodo(widget.todo.id);
+              if (widget.onChanged != null) {
+                widget.onChanged!();
+              }
+            }
+          },
+          icon: const Icon(Icons.delete, color: Colors.red),
         ),
       ],
     );

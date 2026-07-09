@@ -90,9 +90,35 @@ class _TodoDetailScreenState extends State<TodoDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Due: ${todo.dueDate.toString().split(' ')[0]}',
-                    style: const TextStyle(color: Colors.black),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Due: ${todo.dueDate.toString().split(' ')[0]}',
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: todo.isComplete == true
+                              ? Colors.green.withValues(alpha: 0.2)
+                              : Colors.orange.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          todo.isComplete == true ? 'Completed' : 'Pending',
+                          style: TextStyle(
+                            color: todo.isComplete == true
+                                ? Colors.green
+                                : Colors.orange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   Text(
