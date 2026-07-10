@@ -14,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<TodoModel>> _todosFuture;
+  final GlobalKey _fabKey = GlobalKey();
 
   @override
   void initState() {
@@ -25,6 +26,47 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _todosFuture = TodoRepository.getAllTodos();
     });
+  }
+
+  Future<void> _openTodoDialog() async {
+    final RenderBox? fabBox =
+        _fabKey.currentContext?.findRenderObject() as RenderBox?;
+    final Size screenSize = MediaQuery.of(context).size;
+
+    Alignment fabAlignment = Alignment.bottomRight;
+    if (fabBox != null) {
+      final Offset fabCenter = fabBox.localToGlobal(
+        fabBox.size.center(Offset.zero),
+      );
+      fabAlignment = Alignment(
+        (fabCenter.dx / screenSize.width) * 2 - 1,
+        (fabCenter.dy / screenSize.height) * 2 - 1,
+      );
+    }
+
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return const CustomTodoDialog();
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
+            reverseCurve: Curves.easeInCubic,
+          ),
+          alignment: fabAlignment,
+          child: FadeTransition(opacity: animation, child: child),
+        );
+      },
+    );
+
+    _refreshTodos();
   }
 
   @override
@@ -50,16 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           floatingActionButton: InkWell(
-            onTap: () async {
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return const CustomTodoDialog();
-                },
-              );
-              _refreshTodos();
-            },
+            onTap: _openTodoDialog,
             child: Container(
+              key: _fabKey,
               decoration: const BoxDecoration(
                 color: Colors.deepOrangeAccent,
                 shape: BoxShape.circle,
