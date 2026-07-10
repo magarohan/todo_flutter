@@ -23,35 +23,67 @@ class _TodoDetailScreenState extends State<TodoDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return NotebookBackground(
-      child: FutureBuilder<TodoModel?>(
-        future: _todoFuture,
-        builder: (context, snapshot) {
-          final todo = snapshot.data;
+    const double lineSpacing = 32.0;
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+    const double appBarHeight = 64.0;
+    const Color notebookColor = Color(0xFFf8e3c6);
 
-          if (todo == null) {
-            return Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(title: const Text('Not Found')),
-              body: const Center(child: Text('Todo not found')),
-            );
-          }
+    return FutureBuilder<TodoModel?>(
+      future: _todoFuture,
+      builder: (context, snapshot) {
+        final todo = snapshot.data;
 
+        if (todo == null) {
           return Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: notebookColor,
             appBar: AppBar(
+              title: const Text('Not Found'),
               backgroundColor: Colors.transparent,
               elevation: 0,
-              title: Text(todo.title),
             ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+            body: const Center(child: Text('Todo not found')),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: notebookColor,
+          extendBodyBehindAppBar: true,
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(appBarHeight),
+            child: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              iconTheme: const IconThemeData(color: Colors.black),
+              title: Text(
+                todo.title,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  height: lineSpacing / 20,
+                ),
+              ),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: NotebookBackground(
+              lineSpacing: lineSpacing,
+              topMargin: statusBarHeight,
+              baseColor: notebookColor,
+              child: Container(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                padding: EdgeInsets.only(
+                  top: statusBarHeight + appBarHeight,
+                  left: 16.0,
+                  right: 16.0,
+                  bottom: 16.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -61,61 +93,74 @@ class _TodoDetailScreenState extends State<TodoDetailScreen> {
                                 ?.copyWith(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                  height: lineSpacing / 24,
                                 ),
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Text(
                           'Urgency: ${todo.urgency.name.toUpperCase()}',
                           style: TextStyle(
                             color: _getUrgencyColor(todo.urgency),
                             fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            height: lineSpacing / 14,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Due: ${todo.dueDate.toString().split(' ')[0]}',
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: todo.isComplete == true
-                                ? Colors.green.withValues(alpha: 0.2)
-                                : Colors.orange.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            todo.isComplete == true ? 'Completed' : 'Pending',
-                            style: TextStyle(
-                              color: todo.isComplete == true
-                                  ? Colors.green
-                                  : Colors.orange,
-                              fontWeight: FontWeight.bold,
+                    SizedBox(
+                      height: lineSpacing,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Due: ${todo.dueDate.toString().split(' ')[0]}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              height: lineSpacing / 14,
                             ),
                           ),
-                        ),
-                      ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: todo.isComplete == true
+                                  ? Colors.green.withValues(alpha: 0.2)
+                                  : Colors.orange.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              todo.isComplete == true ? 'Completed' : 'Pending',
+                              style: TextStyle(
+                                color: todo.isComplete == true
+                                    ? Colors.green
+                                    : Colors.orange,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: lineSpacing),
                     Text(
                       todo.description,
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        height: lineSpacing / 16,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
