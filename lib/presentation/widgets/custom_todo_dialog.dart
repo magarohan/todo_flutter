@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:todo/core/constants/enums.dart';
 import 'package:todo/data/models/todo_model.dart';
@@ -113,8 +115,9 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black),
+                                borderSide: const BorderSide(
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),
@@ -195,8 +198,7 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                                 final todo = TodoModel(
                                   id:
                                       widget.todo?.id ??
-                                      DateTime.now()
-                                          .millisecondsSinceEpoch
+                                      DateTime.now().millisecondsSinceEpoch
                                           .toString(),
                                   title: titleController.text,
                                   description: descController.text,
