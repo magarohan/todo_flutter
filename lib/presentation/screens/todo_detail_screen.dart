@@ -123,6 +123,15 @@ class _TodoDetailScreenState extends State<TodoDetailScreen> {
                               height: lineSpacing / 14,
                             ),
                           ),
+                          Text(
+                            'Category: ${todo.category.name.toUpperCase()}',
+                            style: const TextStyle(
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              height: lineSpacing / 14,
+                            ),
+                          ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             decoration: BoxDecoration(

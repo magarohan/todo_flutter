@@ -64,26 +64,67 @@ class _CustomTodoTileWidgetState extends State<CustomTodoTileWidget> {
               child: InkWell(
                 onTap: () async {
                   await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
                           TodoDetailScreen(id: widget.todo.id),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                      transitionDuration: const Duration(milliseconds: 300),
                     ),
                   );
                   if (widget.onChanged != null) {
                     widget.onChanged!();
                   }
                 },
-                child: Text(
-                  widget.todo.title,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    decoration: _isChecked
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    fontStyle: FontStyle.italic,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.todo.title,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        decoration: _isChecked
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    Row(
+                      spacing: 10,
+                      children: [
+                        Text(
+                          widget.todo.category.name.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.blueGrey,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Row(
+                          spacing: 5,
+                          children: [
+                            Text("Urgency:"),
+                            Text(
+                              widget.todo.urgency.name.toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),

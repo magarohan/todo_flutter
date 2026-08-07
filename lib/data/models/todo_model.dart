@@ -7,6 +7,7 @@ class TodoModel {
   final DateTime dueDate;
   final DateTime updatedAt;
   final Urgency urgency;
+  final Category category;
   final bool isComplete;
 
   const TodoModel({
@@ -16,6 +17,7 @@ class TodoModel {
     required this.dueDate,
     required this.updatedAt,
     required this.urgency,
+    required this.category,
     this.isComplete = false,
   });
 
@@ -26,6 +28,7 @@ class TodoModel {
     DateTime? dueDate,
     DateTime? updatedAt,
     Urgency? urgency,
+    Category? category,
     bool? isComplete,
   }) {
     return TodoModel(
@@ -35,6 +38,7 @@ class TodoModel {
       dueDate: dueDate ?? this.dueDate,
       updatedAt: updatedAt ?? this.updatedAt,
       urgency: urgency ?? this.urgency,
+      category: category ?? this.category,
       isComplete: isComplete ?? this.isComplete,
     );
   }
@@ -50,6 +54,10 @@ class TodoModel {
         (e) => e.name == map['urgency'],
         orElse: () => Urgency.none,
       ),
+      category: Category.values.firstWhere(
+        (e) => e.name == map['category'],
+        orElse: () => Category.none,
+      ),
       isComplete: map['isComplete'] == 1 || map['isComplete'] == true,
     );
   }
@@ -62,6 +70,7 @@ class TodoModel {
       'dueDate': dueDate.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'urgency': urgency.name,
+      'category': category.name,
       'isComplete': isComplete == true ? 1 : 0,
     };
   }
@@ -72,7 +81,7 @@ class TodoModel {
 
   @override
   String toString() {
-    return 'TodoModel(id: $id, title: $title, description: $description, dueDate: $dueDate, updatedAt: $updatedAt, urgency: $urgency, isComplete: $isComplete)';
+    return 'TodoModel(id: $id, title: $title, description: $description, dueDate: $dueDate, updatedAt: $updatedAt, urgency: $urgency, category: $category, isComplete: $isComplete)';
   }
 
   @override
@@ -86,6 +95,7 @@ class TodoModel {
         other.dueDate == dueDate &&
         other.updatedAt == updatedAt &&
         other.urgency == urgency &&
+        other.category == category &&
         other.isComplete == isComplete;
   }
 
@@ -97,6 +107,7 @@ class TodoModel {
         dueDate.hashCode ^
         updatedAt.hashCode ^
         urgency.hashCode ^
+        category.hashCode ^
         isComplete.hashCode;
   }
 }
