@@ -17,6 +17,7 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
   late TextEditingController titleController;
   late TextEditingController descController;
   late Urgency selectedUrgency;
+  late Category selectedCategory;
   late DateTime selectedDate;
 
   @override
@@ -27,6 +28,7 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
       text: widget.todo?.description ?? "",
     );
     selectedUrgency = widget.todo?.urgency ?? Urgency.none;
+    selectedCategory = widget.todo?.category ?? Category.none;
     selectedDate = widget.todo?.dueDate ?? DateTime.now();
   }
 
@@ -80,7 +82,6 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                               color: Colors.black,
                             ),
                           ),
-                          const SizedBox(height: 10),
                           const Text(
                             "Title",
                             style: TextStyle(
@@ -105,7 +106,6 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
                           const Text(
                             "Description",
                             style: TextStyle(
@@ -133,7 +133,6 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -162,6 +161,32 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                                       if (newValue != null) {
                                         setState(() {
                                           selectedUrgency = newValue;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text("Category"),
+                                  DropdownButton<Category>(
+                                    value: selectedCategory,
+                                    dropdownColor: const Color(0xFFf8e3c6),
+                                    items: Category.values.map((
+                                      Category category,
+                                    ) {
+                                      return DropdownMenuItem<Category>(
+                                        value: category,
+                                        child: Text(
+                                          category.name.toUpperCase(),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (Category? newValue) {
+                                      if (newValue != null) {
+                                        setState(() {
+                                          selectedCategory = newValue;
                                         });
                                       }
                                     },
@@ -205,7 +230,6 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
                           GestureDetector(
                             onTap: () async {
                               if (titleController.text.isNotEmpty) {
@@ -222,6 +246,7 @@ class _CustomTodoDialogState extends State<CustomTodoDialog> {
                                     urgency: selectedUrgency,
                                     isComplete:
                                         widget.todo?.isComplete ?? false,
+                                    category: selectedCategory,
                                   );
                                   final navigator = Navigator.of(context);
                                   if (widget.todo == null) {
